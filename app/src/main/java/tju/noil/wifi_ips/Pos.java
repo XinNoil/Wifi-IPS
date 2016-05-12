@@ -6,8 +6,8 @@ import java.text.DecimalFormat;
  * Created by noil on 2016/5/8.
  */
 public class Pos {
-    double x;
-    double y;
+    public double x;
+    public double y;
     public Pos (){
         this.x=0;
         this.y=0;

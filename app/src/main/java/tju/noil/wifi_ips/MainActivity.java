@@ -18,12 +18,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView targetView;
     private Button button;
     private Button save_button;
+    private Button next_button;
     private StringBuilder stra;
     private StringBuilder strb;
     private wifiAdmin wA;
     private File file;
     private FileOutputStream fos;
     private int dataIndex=0;
+    private int pointIndex=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +35,14 @@ public class MainActivity extends AppCompatActivity {
         wifiListView = (TextView)findViewById(R.id.textView2);
         button=(Button)findViewById(R.id.button);
         save_button=(Button)findViewById(R.id.save_button);
+        next_button=(Button)findViewById(R.id.button2);
         wA=new wifiAdmin(this);
         startWifiMonitor(wA);
         ButtonListener buttonListener=new ButtonListener();
         button.setOnClickListener(buttonListener);
-        ButtonListener saveButtonListener=new ButtonListener();
-        save_button.setOnClickListener(saveButtonListener);
+        //ButtonListener saveButtonListener=new ButtonListener();
+        save_button.setOnClickListener(buttonListener);
+        next_button.setOnClickListener(buttonListener);
         File appPath = this.getExternalFilesDir(null);
         file = new File(appPath, "data.txt");
         try {
@@ -56,23 +60,32 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             if(v.getId()==R.id.button){
                 reWifiMonitor(wA);
-                dataIndex=0;
-                String str="Save Index:"+Integer.toString(dataIndex);
+                String str="Index Point:"+Integer.toString(pointIndex)+" Save:"+Integer.toString(dataIndex);
                 indexView.setText(str);
             }
             else if(v.getId()==R.id.save_button){
                 reWifiMonitor(wA);
                 saveData();
+                dataIndex++;
+                String str="Index Point:"+Integer.toString(pointIndex)+" Save:"+Integer.toString(dataIndex);
+                indexView.setText(str);
+            }
+            else if(v.getId()==R.id.button2){
+                reWifiMonitor(wA);
+                dataIndex=0;
+                pointIndex++;
+                String str="Index Point:"+Integer.toString(pointIndex)+" Save:"+Integer.toString(dataIndex);
+                indexView.setText(str);
             }
         }
     }
 
     public void startWifiMonitor(wifiAdmin wA){
         wA.StartScan();
-        stra= wA.LookUptarget();
-        targetView.setText(stra.toString());
-        strb=wA.LookUpScan();
-        wifiListView.setText(strb.toString());
+//        stra= wA.LookUptarget();
+//        targetView.setText(stra.toString());
+//        strb=wA.LookUpScan();
+//        wifiListView.setText(strb.toString());
     }
     public void reWifiMonitor(wifiAdmin wA){
         wA.ReScan();
@@ -82,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         wifiListView.setText(strb.toString());
     }
     public void saveData(){
-        String content = Integer.toString(dataIndex)+" "+stra.toString();
+        String content = Integer.toString(pointIndex)+" "+stra.toString();
         try {
             fos = new FileOutputStream(file,true);
             byte [] bytes = content.getBytes();
@@ -93,8 +106,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        dataIndex++;
-        String str="Save Index:"+Integer.toString(dataIndex);
-        indexView.setText(str);
     }
 }

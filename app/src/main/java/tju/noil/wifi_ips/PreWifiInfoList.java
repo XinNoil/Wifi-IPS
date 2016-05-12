@@ -3,16 +3,21 @@ package tju.noil.wifi_ips;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by noil on 2016/5/8.
  */
 public class PreWifiInfoList {
     public List<PreWifiInfo> list;
+    public int max_pre;
     public PreWifiInfoList(){
+        list=new ArrayList<PreWifiInfo>(3);
+        max_pre=3;
+    }
+    public void defaultInit(){
         PreWifiInfo A=new PreWifiInfo(5.6,3.2,"70:ba:ef:cb:c2:11");
         PreWifiInfo B=new PreWifiInfo(20.6,3.2,"70:ba:ef:cb:7d:81");
         PreWifiInfo C=new PreWifiInfo(20.6,10.8,"70:ba:ef:cb:da:80");
-        list=new ArrayList<PreWifiInfo>(3);
         list.add(A);
         list.add(B);
         list.add(C);
@@ -24,3 +29,4 @@ public class PreWifiInfoList {
         list.get(i).RSSI = rssi;
     }
 }
+
