@@ -63,24 +63,17 @@ public class wifiAdmin {
         mWifiManager.startScan();
         //得到扫描结果
         mWifiList = mWifiManager.getScanResults();
-        rssi=new double[3];
+        rssi=new double[preWifiInfoList.max_pre];
         for(ScanResult scanResult : mWifiList){
-            if(scanResult.BSSID.equals(preWifiInfoList.list.get(0).BSSID)){
-                //preWifiInfoList.setIRSSI(0,scanResult.level);
-                rssi[0]=scanResult.level;
-            }
-            else if(scanResult.BSSID.equals(preWifiInfoList.list.get(1).BSSID)){
-                //preWifiInfoList.setIRSSI(1,scanResult.level);
-                rssi[1]=scanResult.level;
-            }
-            else if(scanResult.BSSID.equals(preWifiInfoList.list.get(2).BSSID)){
-                //preWifiInfoList.setIRSSI(2,scanResult.level);
-                rssi[2]=scanResult.level;
+            for (int i = 0; i < preWifiInfoList.max_pre; i++) {
+                if(scanResult.BSSID.equals(preWifiInfoList.list.get(i).BSSID)){
+                    rssi[i]=scanResult.level;
+                }
             }
         }
         locator.setListRSSI(rssi);
         solution=locator.leastSquares();
-        result=locator.Gauss_Newton(solution,200000);
+        result=locator.Gauss_Newton(solution,100000);
         solution=locator.getfbeta();
     }
     //得到网络列表
@@ -93,12 +86,18 @@ public class wifiAdmin {
     {
         DecimalFormat df = new DecimalFormat("#.00");
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(locator.inter+" "+df.format(locator.getResidualSum(locator.getfbeta()))+" ");
         for (int i = 0; i < solution.length; i++) {
             stringBuilder.append(df.format(solution[i])+" ");
         }
         stringBuilder.append("\n");
-        stringBuilder.append(locator.list.get(0).RSSI+" "+locator.list.get(1).RSSI+" "+locator.list.get(2).RSSI+"\n");
-        stringBuilder.append(df.format(locator.list.get(0).distance)+" "+df.format(locator.list.get(1).distance)+" "+df.format(locator.list.get(2).distance));
+        for (int i = 0; i < preWifiInfoList.max_pre; i++) {
+            stringBuilder.append(locator.list.get(i).RSSI+" ");
+        }
+        stringBuilder.append("\n");
+        for (int i = 0; i < preWifiInfoList.max_pre; i++) {
+            stringBuilder.append(df.format(locator.list.get(i).distance)+" ");
+        }
         stringBuilder.append("\n");
         return stringBuilder;
     }
@@ -108,15 +107,15 @@ public class wifiAdmin {
 
         DecimalFormat df = new DecimalFormat("#.00");
         StringBuilder stringBuilder = new StringBuilder();
-        double sum=0;
-        for (int i = 0; i < locator.inter; i+=1000) {
-            sum=0;
-            for (int j = 0; j < result[0].length; j++) {
-                stringBuilder.append(df.format(result[i][j]) + " ");
-            }
-            double[] r=locator.residual(result[i]).getColumnPackedCopy();
-            stringBuilder.append(df.format(locator.getResidualSum(r))+" \n");
-        }
+//        double sum=0;
+//        for (int i = 0; i < locator.inter; i+=1000) {
+//            sum=0;
+//            for (int j = 0; j < result[0].length; j++) {
+//                stringBuilder.append(df.format(result[i][j]) + " ");
+//            }
+//            double[] r=locator.residual(result[i]).getColumnPackedCopy();
+//            stringBuilder.append(df.format(locator.getResidualSum(r))+" \n");
+//        }
 
 //        for (int i = 0; i < locator.arrayA.length; i++) {
 //            for (int j = 0; j < locator.arrayA[0].length; j++) {
@@ -131,11 +130,11 @@ public class wifiAdmin {
 //        for (int i = 0; i < locator.arrayB.length; i++) {
 //            stringBuilder.append(df.format(locator.arrayB[i])+" ");
 //        }
-//        for (ScanResult scanResult : mWifiList) {
-//            stringBuilder.append("\nSSID: "+scanResult.SSID+"\nBSSID: "+scanResult.BSSID
-//                    +"\nRSSI: "+scanResult.level+"\nLEVEL: "+mWifiManager.calculateSignalLevel(scanResult.level,4));
-//            stringBuilder.append("\n");
-//        }
+        for (ScanResult scanResult : mWifiList) {
+            stringBuilder.append("\nSSID: "+scanResult.SSID+"\nBSSID: "+scanResult.BSSID
+                    +"\nRSSI: "+scanResult.level+"\nLEVEL: "+mWifiManager.calculateSignalLevel(scanResult.level,4));
+            stringBuilder.append("\n");
+        }
         return stringBuilder;
     }
 }

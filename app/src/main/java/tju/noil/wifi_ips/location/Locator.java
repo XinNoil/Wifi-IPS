@@ -27,7 +27,7 @@ public class Locator {
     private double[] fbeta;
     public int inter;
     private double minResidual=1.0E308;
-    private double sumresidual;
+    public double sumresidual;
     public Locator(List<PreWifiInfo> list,int m){
         this.list=list;
         this.m=m;

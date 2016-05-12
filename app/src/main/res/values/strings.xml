@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Wifi-IPS</string>
+    <string name="title_activity_locate">LocateActivity</string>
 </resources>
